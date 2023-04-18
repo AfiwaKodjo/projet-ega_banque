@@ -1,5 +1,7 @@
 package ega.appli.ega.controller;
 
+import ega.appli.ega.allRecords.CompteOperation;
+import ega.appli.ega.allRecords.CompteVirement;
 import ega.appli.ega.entities.Compte;
 import ega.appli.ega.services.CompteService;
 import lombok.AllArgsConstructor;
@@ -11,9 +13,9 @@ import java.util.List;
 @AllArgsConstructor
 public class CompteController {
     private final CompteService compteService;
-    @PostMapping("/creer_compte")
+    @PostMapping("/creer")
     public Compte create(@RequestBody Compte compte){
-        return compteService.creer(compte.getId(), compte);
+        return compteService.creer(compte);
     }
 
     @GetMapping("/lire")
@@ -26,29 +28,27 @@ public class CompteController {
         return compteService.suprimer(numCompte);
     }
 
-    /*@PatchMapping("/versement/{numCompte}")
-    public Compte versement(@RequestBody String numeroCompte, @RequestBody Double montant){
-        return compteService.versement(numeroCompte, montant);
-    }*/
 
-    @PostMapping("/versement/{numCompte}")
-    public Compte versement(@PathVariable String numeroCompte, @RequestBody Double montant){
-        return compteService.versement(numeroCompte, montant);
+
+    @PostMapping("/versement")
+    public Compte versement(@RequestBody CompteOperation compteOperation){
+        return compteService.versement(compteOperation.NumeroCompte(), compteOperation.Montant());
     }
 
-    @PatchMapping("/retrait/{numCompte}")
-    public Compte retrait(@RequestBody String numeroCompte, @RequestBody Double montant){
-        return compteService.retrait(numeroCompte, montant);
+    @PostMapping("/retrait")
+    public Compte retrait(@RequestBody CompteOperation compteOperation){
+        return compteService.retrait(compteOperation.NumeroCompte(), compteOperation.Montant());
     }
 
-    @PatchMapping("/virement/{numCompte}")
-    public Compte virement(@RequestBody String numeroCompteDebit, @RequestBody Double montant, @RequestBody String numeroCompteCredit){
-        return compteService.virement(numeroCompteDebit, numeroCompteCredit, montant);
+    @PostMapping("/virement")
+    public Compte virement(@RequestBody CompteVirement VirementOperation){
+        return compteService.virement(VirementOperation.NumCompteCrediter(),
+                VirementOperation.NumCompteRecepteur(), VirementOperation.Montant());
     }
 
-    @PutMapping("/modifierCompte/{id}")
-    public Compte update(@PathVariable Integer id, @RequestBody Compte compte){
-        return compteService.modifier(id, compte);
+    @PutMapping("/modifierCompte/{numeroCompte}")
+    public Compte update(@PathVariable String numeroCompte, @RequestBody Compte compte){
+        return compteService.modifier(numeroCompte, compte);
     }
 
 }

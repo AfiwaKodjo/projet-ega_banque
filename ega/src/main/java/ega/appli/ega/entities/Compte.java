@@ -12,10 +12,10 @@ import java.time.LocalDate;
 @Setter
 @Table(name = "comptes")
 public class Compte {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    private Integer id;
+
+
     @Column(length = 30)
+    @Id
     private String numCompte;
     @Column(length = 30)
     private String typeCompte;

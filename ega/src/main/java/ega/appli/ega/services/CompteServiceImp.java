@@ -1,7 +1,6 @@
 package ega.appli.ega.services;
 
 import ega.appli.ega.entities.Compte;
-import ega.appli.ega.repositories.ClientRepository;
 import ega.appli.ega.repositories.CompteRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +25,7 @@ public class CompteServiceImp implements CompteService{
         return builder.toString();
     }
    @Override
-    public Compte creer(Integer id, Compte compte) {
+    public Compte creer(Compte compte) {
         compte.setNumCompte(NumeroCompte(compte));
         return compteRepository.save(compte);
     }
@@ -36,8 +35,8 @@ public class CompteServiceImp implements CompteService{
         return compteRepository.findAll();
     }
     @Override
-    public Compte modifier(Integer id, Compte compte) {
-        return compteRepository.findById(String.valueOf(id)).map(
+    public Compte modifier(String numeroCompte, Compte compte) {
+        return compteRepository.findById(String.valueOf(numeroCompte)).map(
                 p->{
                     p.setTypeCompte(compte.getTypeCompte());
                     p.setDateCreation(compte.getDateCreation());
@@ -55,15 +54,7 @@ public class CompteServiceImp implements CompteService{
         }else {return "compte non trouvé !";}
     }
 
-    /*@Override
-    public Compte versement(String numCpt, Double montant) {
-        return compteRepository.findById(numCpt).map(
-                p->{
-                    p.setSolde(p.getSolde()+montant);
-                    return compteRepository.save(p);
-                }).orElseThrow(()-> new RuntimeException("Compte non trouvé !"));
 
-    }*/
     @Override
     public Compte versement(String numCpt, Double montant) {
         var compte = compteRepository.findById(numCpt);
@@ -81,17 +72,22 @@ public class CompteServiceImp implements CompteService{
 
     @Override
     public Compte retrait(String numCpt, Double montant) {
-        return compteRepository.findById(numCpt).map(
-                p->{
-                    p.setSolde(p.getSolde()-montant);
-                    return compteRepository.save(p);
-                }).orElseThrow(()-> new RuntimeException("Compte non trouvé !"));
+        var compte = compteRepository.findById(numCpt);
+        if (compte.isPresent()) {
+            var cpt = compte.get();
+            if(cpt.getSolde() < montant)
+                throw new RuntimeException("Solde du compte insuffisant pour effectuer le retrait !");
+            cpt.setSolde(cpt.getSolde() - montant);
+            return compteRepository.save(cpt);
+        }
+        throw new RuntimeException("Compte non trouvé !");
+
+
     }
 
     @Override
     public Compte virement(String numCptDebit, String numCptCredit, Double montant) {
         retrait(numCptDebit, montant);
-        versement(numCptCredit, montant);
-        return null;
+        return versement(numCptCredit, montant);
     }
 }
