@@ -36,20 +36,28 @@ public class CompteServiceImp implements CompteService{
     }
     @Override
     public Compte modifier(String numeroCompte, Compte compte) {
-        return compteRepository.findById(String.valueOf(numeroCompte)).map(
-                p->{
-                    p.setTypeCompte(compte.getTypeCompte());
-                    p.setDateCreation(compte.getDateCreation());
-                    p.setSolde(compte.getSolde());
+        //return compteRepository.findById(String.valueOf(numeroCompte)).map(
+        compte.setNumCompte(compte.getNumCompte());
+        compte.setTypeCompte(compte.getTypeCompte());
+        compte.setSolde(compte.getSolde());
+        return compteRepository.save(compte);
+//                p->{
+//                    p.setTypeCompte(compte.getTypeCompte());
+//                    p.setDateCreation(compte.getDateCreation());
+//                    p.setSolde(compte.getSolde());
+//
+//                    return compteRepository.save(p);
+//                }).orElseThrow(()-> new RuntimeException("Client non trouvé !"));
 
-                    return compteRepository.save(p);
-                }).orElseThrow(()-> new RuntimeException("Client non trouvé !"));
+
     }
 
     @Override
     public String suprimer(String numCpt) {
-        if(compteRepository.existsById(numCpt)){
-            compteRepository.deleteById(numCpt);
+        //System.out.println(compteRepository.findById(numCpt));
+        var c = compteRepository.findById(numCpt);
+        if(c.isPresent()){
+            compteRepository.deleteById(String.valueOf(c));
             return "compte supprimé";
         }else {return "compte non trouvé !";}
     }
