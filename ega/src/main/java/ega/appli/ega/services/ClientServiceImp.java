@@ -37,14 +37,18 @@ public class ClientServiceImp implements ClientService{
                 p->{
                     p.setEmail(client.getEmail());
                     p.setNom(client.getNom());
+                    p.setDateNaissance(client.getDateNaissance());
                     p.setPrenom(client.getPrenom());
                     p.setTel(client.getTel());
+                    p.setNationalité(client.getNationalité());
+                    p.setSex(client.getSex());
                     return clientRepository.save(p);
                 }).orElseThrow(()-> new RuntimeException("Client non trouvé !"));
     }
 
     @Override
     public String suprimer(Integer id) {
+        System.out.println(clientRepository.existsById(id));
         if(clientRepository.existsById(id)){
             clientRepository.deleteById(id);
             return "client supprimé";

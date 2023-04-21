@@ -3,9 +3,11 @@ package ega.appli.ega.services;
 import ega.appli.ega.entities.Compte;
 import ega.appli.ega.repositories.CompteRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 
@@ -51,16 +53,28 @@ public class CompteServiceImp implements CompteService{
 
 
     }
-
     @Override
-    public String suprimer(String numCpt) {
-        //System.out.println(compteRepository.findById(numCpt));
-        var c = compteRepository.findById(numCpt);
-        if(c.isPresent()){
-            compteRepository.deleteById(String.valueOf(c));
+    /*public String suprimer(String numCpt) {
+        System.out.println(numCpt);
+        //var c = compteRepository.findById(numCpt);
+        //if(c.isPresent()){
+           compteRepository.deleteById(numCpt);
             return "compte supprimé";
-        }else {return "compte non trouvé !";}
+        //}else {return "compte non trouvé !";}
+    }*/
+    public String suprimer(String numCpt) {
+            System.out.println(compteRepository.findById(numCpt));
+        Optional<Compte> compte = compteRepository.findById(numCpt);
+        if (compte.isPresent() ) {
+            compteRepository.deleteById(numCpt);
+            return "Ce compte existe";
+        }
+        else {
+            return "Ce compte n'existe pas!!";
+        }
     }
+
+
 
 
     @Override
